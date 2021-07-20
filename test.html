@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Document</title>
+</head>
+
+<body>
+
+</body>
+<script>
+    // 约定:
+    // title 数据类型为 String
+    // userId 为主键，数据类型为 Number 
+    const data = [{
+            userId: 8,
+            title: 'title1'
+        },
+        {
+            userId: 11,
+            title: 'other'
+        },
+        {
+            userId: 15,
+            title: null
+        },
+        {
+            userId: 19,
+            title: 'title2'
+        }
+    ];
+
+    function compare(property, item) {
+        return function (a, b) {
+            var value1 = a[property];
+            var value2 = b[property];
+            return item == 'desc' ? value2 - value1 : value1 - value2;
+        }
+    }
+    const find = function (origin) {
+        let where = function (obj) {
+            let objKey = '',
+                objValue, testArr = [];
+            for (let key in obj) {
+                objKey = key;
+                objValue = obj[key]
+            }
+            origin.map(e => {
+                if (objValue.test(e[objKey])) {
+                    testArr.push(e)
+                }
+            })
+            let orderBy = function (id, method) {
+                return testArr.sort(compare(id, method))
+
+            }
+            return {
+                orderBy
+            }
+        }
+        return {
+            where
+        }
+
+    }
+
+    // 查找 data 中，符合条件的数据，并进行排序 
+    const result = find(data).where({
+        'title': /\d$/
+    }).orderBy('userId', 'desc');
+
+    console.log(result);
+    // [{ userId: 19, title: 'title2'}, { userId: 8, title: 'title1' }];
+</script>
+
+</html>
